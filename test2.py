@@ -14,12 +14,13 @@ class Snake:
     global WIDTH
     global HEIGHT
     
-    def __init__(self,x,y,numSegments,screen,sprite):
+    def __init__(self,x,y,numSegments,screen,headspriteList,bodysprite):
         self.x = x
         self.y = y
         self.numSegments = numSegments
         self.screen = screen
-        self.sprite = sprite
+        self.headspriteList = headspriteList
+        self.bodysprite = bodysprite
         self.bodyList = [SnakeBody(x,y)]
         for i in range(1,self.numSegments-1):
             self.bodyList.append(SnakeBody(x-i*SPRITE_SIZE,y))
@@ -61,9 +62,18 @@ class Snake:
                 return True
         return False
 
-    def draw_snake(self):
-        for i in range(len(self.bodyList)):
-            self.screen.blit(self.sprite,(self.bodyList[i].get_x(),self.bodyList[i].get_y()))
+    def draw_snake(self,headDir):
+        if headDir == "UP":
+            head = self.headspriteList[0]
+        elif headDir == "DOWN":
+            head = self.headspriteList[1]
+        elif headDir == "LEFT":
+            head = self.headspriteList[2]
+        elif headDir == "RIGHT":
+            head = self.headspriteList[3]
+        self.screen.blit(head,(self.x,self.y))
+        for i in range(1,len(self.bodyList)):
+            self.screen.blit(self.bodysprite,(self.bodyList[i].get_x(),self.bodyList[i].get_y()))
             
 class SnakeBody:
 
@@ -128,7 +138,13 @@ def main():
     screen = pygame.display.set_mode([WIDTH,HEIGHT])
 
     bodySprite = pygame.image.load("snakebody.png")
+    headup = pygame.image.load("headup.png")
+    headdown = pygame.image.load("headdown.png")
+    headleft = pygame.image.load("headleft.png")
+    headright = pygame.image.load("headright.png")
+    headSpriteList = [headup, headdown,headleft,headright]
     foodSprite = pygame.image.load("food.png")
+    enemySprite = pygame.image.load("enemy.png")
      
     pygame.display.set_caption("Snake Test")
     done = False
@@ -136,8 +152,8 @@ def main():
 
     screen.fill(WHITE)
 
-    snake = Snake(400,300,7,screen,bodySprite)
-    snake.draw_snake()
+    snake = Snake(400,300,7,screen,headSpriteList,bodySprite)
+    snake.draw_snake("RIGHT")
 
     food = Foods(screen,foodSprite)
     food.generate_food(3)
@@ -164,7 +180,7 @@ def main():
         if(snake.check_collision()):
             done = True
         screen.fill(WHITE)
-        snake.draw_snake()
+        snake.draw_snake(curr_dir)
         food.draw_food()
         if food.get_numFoods() < 1:
             food.generate_food(3)
