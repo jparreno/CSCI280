@@ -14,6 +14,7 @@ SPRITE_SIZE = 25
 WIDTH = 800
 HEIGHT = 600
 
+
 class Snake:
     global SPRITE_SIZE
     global WIDTH
@@ -65,6 +66,9 @@ class Snake:
         for i in range(1,len(self.bodyList)):
             if (self.bodyList[i].get_x() == self.x and self.bodyList[i].get_y() == self.y):
                 return True
+        print(self.x, self.y)
+        if self.x < SPRITE_SIZE or self.x >= WIDTH - SPRITE_SIZE or self.y < SPRITE_SIZE or self.y >= HEIGHT - SPRITE_SIZE:
+            return True
         return False
 
     def draw_snake(self,headDir):
