@@ -28,12 +28,12 @@ from os import getcwd
 
 class SpriteTileMap:
 
-    def __init__(self):
+    def __init__(self, filename):
 
         self.tileMap = []
         self.spriteInventory = OurSpriteInventory()
 
-        mapFile = open(getcwd() + "/backgroundMap.txt", 'r')
+        mapFile = open(getcwd() + "/" + filename, 'r')
         spriteFile = open(getcwd() + "/_sprite-detail.txt", 'r')
 
         for line in mapFile:
