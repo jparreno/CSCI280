@@ -155,7 +155,7 @@ def main():
     done = False
     clock = pygame.time.Clock()
 
-    background = SpriteTileMap()
+    background = SpriteTileMap("backgroundMap.txt")
     background.drawMap(screen)
 
     #screen.fill(WHITE)

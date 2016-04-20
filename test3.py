@@ -66,7 +66,6 @@ class Snake:
         for i in range(1,len(self.bodyList)):
             if (self.bodyList[i].get_x() == self.x and self.bodyList[i].get_y() == self.y):
                 return True
-        print(self.x, self.y)
         if self.x < SPRITE_SIZE or self.x >= WIDTH - SPRITE_SIZE or self.y < SPRITE_SIZE or self.y >= HEIGHT - SPRITE_SIZE:
             return True
         return False
@@ -159,7 +158,7 @@ def main():
     done = False
     clock = pygame.time.Clock()
 
-    background = SpriteTileMap()
+    background = SpriteTileMap("backgroundMap.txt")
     background.drawMap(screen)
 
     #screen.fill(WHITE)
