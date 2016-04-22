@@ -227,6 +227,13 @@ class Food:
 
 def main():
     pygame.init()
+    pygame.mixer.init()
+
+    bite_sound = pygame.mixer.Sound("bite.wav")
+    bite_sound.set_volume(.5)
+    background_sound = pygame.mixer.Sound("background.wav")
+    #background_sound.set_volume(.25)
+    background_sound.play(-1)
 
     screen = pygame.display.set_mode([WIDTH,HEIGHT])
 
@@ -281,7 +288,8 @@ def main():
                     curr_dir = "DOWN"
 
         snake.move(curr_dir,food.check_eat(snake.get_headObj()))
-
+        if food.check_eat(snake.get_headObj()):
+            bite_sound.play()
         if mongoose_move:
             for m in mongooseList:
                 m.move(snake)
