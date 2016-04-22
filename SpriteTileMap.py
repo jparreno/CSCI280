@@ -26,6 +26,17 @@ import pygame
 
 from os import getcwd
 
+class Point:
+    def __init__(self,x,y):
+        self.x = x
+        self.y = y
+
+    def get_x(self):
+        return self.x
+
+    def get_y(self):
+        return self.y
+
 class SpriteTileMap:
 
     def __init__(self, filename):
@@ -119,3 +130,11 @@ class SpriteTileMap:
             self.tileMap[row][col] = symbol
             return True
         return False
+
+    def getBarriers(self,charList,spriteSize):
+        barrierList = []
+        for i in range(self.numRows):
+            for j in range(self.numCols):
+                if (self.tileMap[i][j] in charList):
+                    barrierList.append(Point(j*spriteSize,i*spriteSize))
+        return barrierList
