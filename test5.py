@@ -232,7 +232,7 @@ def main():
     bite_sound = pygame.mixer.Sound("bite.wav")
     bite_sound.set_volume(.5)
     background_sound = pygame.mixer.Sound("background.wav")
-    #background_sound.set_volume(.25)
+    #bbackground_sound.set_volume(.25)
     background_sound.play(-1)
 
     screen = pygame.display.set_mode([WIDTH,HEIGHT])
