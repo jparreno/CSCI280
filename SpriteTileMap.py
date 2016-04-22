@@ -37,6 +37,11 @@ class Point:
     def get_y(self):
         return self.y
 
+    def __eq__(self, newPoint):
+        if self.x == newPoint.get_x() and self.y == newPoint.get_y():
+            return True
+        return False
+        
 class SpriteTileMap:
 
     def __init__(self, filename):

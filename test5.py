@@ -1,5 +1,7 @@
 import pygame
 
+from OurSprite import *
+from OurSpriteInventory import *
 from SpriteTileMap import *
 
 from random import randrange
@@ -12,16 +14,15 @@ SPRITE_SIZE = 25
 WIDTH = 800
 HEIGHT = 600
 
-# start with 2 mongooses
-# get_x and get_y
 class Mongoose:
 
-    def __init__(self, x, y, screen, sprite):
+    def __init__(self, x, y, screen, sprite, barrierList):
         self.x = x
         self.y = y
         self.screen = screen
         self.sprite = sprite
         self.directions = ["LEFT", "RIGHT", "UP", "DOWN"]
+        self.barrierList = barrierList
 
     def getX(self):
         return self.x
@@ -29,9 +30,9 @@ class Mongoose:
     def getY(self):
         return self.y
 
-    def boundaryHit(self, x, y):
-        if (self.x + x < SPRITE_SIZE or self.x + x >= WIDTH - SPRITE_SIZE or
-            self.y + y < SPRITE_SIZE or self.y + y >= HEIGHT - SPRITE_SIZE):
+    def boundaryHit(self, change_x, change_y):
+        p = Point(self.x + change_x, self.y + change_y)
+        if p in self.barrierList:
             return True
         return False
 
@@ -78,19 +79,19 @@ class Mongoose:
     def draw(self):
         self.screen.blit(self.sprite, (self.x, self.y))
 
-
 class Snake:
     global SPRITE_SIZE
     global WIDTH
     global HEIGHT
 
-    def __init__(self,x,y,numSegments,screen,headspriteList,bodysprite):
+    def __init__(self,x,y,numSegments,screen,headspriteList,bodysprite,barrierList):
         self.x = x
         self.y = y
         self.numSegments = numSegments
         self.screen = screen
         self.headspriteList = headspriteList
         self.bodysprite = bodysprite
+        self.barrierList = barrierList
         self.bodyList = [SnakeBody(x,y)]
         for i in range(1,self.numSegments-1):
             self.bodyList.append(SnakeBody(x-i*SPRITE_SIZE,y))
@@ -123,12 +124,6 @@ class Snake:
     def get_bodyList(self):
         return self.bodyList
 
-    def get_x(self):
-        return self.x
-
-    def get_y(self):
-        return self.y
-
     def get_headObj(self):
         return self.bodyList[0]
 
@@ -136,11 +131,16 @@ class Snake:
         for i in range(1,len(self.bodyList)):
             if (self.bodyList[i].get_x() == self.x and self.bodyList[i].get_y() == self.y):
                 return True
-        if self.x < SPRITE_SIZE or self.x >= WIDTH - SPRITE_SIZE or self.y < SPRITE_SIZE or self.y >= HEIGHT - SPRITE_SIZE:
-            return True
+
+        for i in range(len(self.barrierList)):
+            if (self.barrierList[i].get_x() == self.x and self.barrierList[i].get_y() == self.y):
+                return True
+
         for m in mongooseList:
             if m.getX() == self.x and m.getY() == self.y:
                 return True
+##        if self.x < SPRITE_SIZE or self.x >= WIDTH - SPRITE_SIZE or self.y < SPRITE_SIZE or self.y >= HEIGHT - SPRITE_SIZE:
+##            return True
         return False
 
     def draw_snake(self,headDir):
@@ -155,6 +155,12 @@ class Snake:
         self.screen.blit(head,(self.x,self.y))
         for i in range(1,len(self.bodyList)):
             self.screen.blit(self.bodysprite,(self.bodyList[i].get_x(),self.bodyList[i].get_y()))
+
+    def get_x(self):
+        return self.x
+
+    def get_y(self):
+        return self.y
 
 class SnakeBody:
 
@@ -173,15 +179,21 @@ class SnakeBody:
 
 class Foods:
     global SPRITE_SIZE
-    def __init__(self,screen,sprite):
+    def __init__(self,screen,sprite,barrierList):
         self.screen = screen
         self.sprite = sprite
+        self.barrierList = barrierList
         self.foodList = []
 
     def generate_food(self,amount):
-        for i in range(amount):
-            x = randrange(0 + SPRITE_SIZE, WIDTH - SPRITE_SIZE, SPRITE_SIZE)
-            y = randrange(0 + SPRITE_SIZE, HEIGHT - SPRITE_SIZE, SPRITE_SIZE)
+        while(len(self.foodList) < amount):
+            x = randrange(0, WIDTH, SPRITE_SIZE)
+            y = randrange(0, HEIGHT, SPRITE_SIZE)
+            testPoint = Point(x, y)
+            while testPoint in self.barrierList:
+                x = randrange(0, WIDTH, SPRITE_SIZE)
+                y = randrange(0, HEIGHT, SPRITE_SIZE)
+                testPoint = Point(x, y)
             self.foodList.append(Food(x,y))
 
     def get_numFoods(self):
@@ -231,22 +243,23 @@ def main():
     done = False
     clock = pygame.time.Clock()
 
-    background = SpriteTileMap("backgroundMap.1.txt")
+    background = SpriteTileMap("backgroundMap.txt")
+    barrierList = background.getBarriers(['l'],SPRITE_SIZE)
     background.drawMap(screen)
 
     #screen.fill(WHITE)
 
-    snake = Snake(400,300,7,screen,headSpriteList,bodySprite)
+    snake = Snake(400,300,7,screen,headSpriteList,bodySprite,barrierList)
     snake.draw_snake("RIGHT")
 
     mongooseList = []
-    mongooseList.append(Mongoose(25, 25, screen, enemySprite))
-    mongooseList.append(Mongoose((WIDTH) - 50, (HEIGHT) - 50, screen, enemySprite))
+    mongooseList.append(Mongoose(25, 25, screen, enemySprite, barrierList))
+    #mongooseList.append(Mongoose((WIDTH) - 50, (HEIGHT) - 50, screen, enemySprite, barrierList))
     for m in mongooseList:
         m.draw()
     mongoose_move = True
 
-    food = Foods(screen,foodSprite)
+    food = Foods(screen,foodSprite,barrierList)
     food.generate_food(3)
     food.draw_food()
 
@@ -281,9 +294,9 @@ def main():
         background.drawMap(screen)
         #screen.fill(WHITE)
         snake.draw_snake(curr_dir)
+        food.draw_food()
         for m in mongooseList:
             m.draw()
-        food.draw_food()
         if food.get_numFoods() < 1:
             food.generate_food(3)
             level += 1
