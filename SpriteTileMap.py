@@ -1,3 +1,50 @@
+
+
+from OurSprite import *
+from OurSpriteInventory import *
+
+import pygame
+
+from os import getcwd
+
+'''
+Properties owned:
+    x - x coordinate of the point
+    y - y coordinate of the point
+Behaviors:
+    init – initializes the Point with the provided x and y
+    get_x - returns the x coordinate of the point
+    get_y - returns the y coordinate of the point
+'''
+class Point:
+    def __init__(self,x,y):
+        self.x = x
+        self.y = y
+
+    """
+    Returns the x value of the snakebody.
+    @return: x coordinate of the snakebody
+    """
+    def get_x(self):
+        return self.x
+
+    """
+    Returns the y value of the snakebody.
+    @return: y coordinate of the snakebody
+    """
+    def get_y(self):
+        return self.y
+
+    """
+    Override the eq method to accomadate for the snakebody.
+    @param: newPoint - value to compare against self
+    @return: true if they are equal; false otherwise
+    """
+    def __eq__(self, newPoint):
+        if self.x == newPoint.get_x() and self.y == newPoint.get_y():
+            return True
+        return False
+
 '''
 Purpose: Represents the 2D grid of symbols and an inventory of sprites used to draw the tile map.
 
@@ -18,30 +65,6 @@ Behaviors:
     printMap – Receives nothing. Print symbols of map skipping a line after printing each row.
     drawMap – Receives a Pygame screen. Draw the tile map using sprites.
 '''
-
-from OurSprite import *
-from OurSpriteInventory import *
-
-import pygame
-
-from os import getcwd
-
-class Point:
-    def __init__(self,x,y):
-        self.x = x
-        self.y = y
-
-    def get_x(self):
-        return self.x
-
-    def get_y(self):
-        return self.y
-
-    def __eq__(self, newPoint):
-        if self.x == newPoint.get_x() and self.y == newPoint.get_y():
-            return True
-        return False
-        
 class SpriteTileMap:
 
     def __init__(self, filename):

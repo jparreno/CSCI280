@@ -1,6 +1,4 @@
 '''
-Seth Stoudenmier
---------------------------
 class OurSpriteInventory (save to separate file OurSpriteInventory.py)
 
 properties:
@@ -17,8 +15,6 @@ return OurSprite object whose symbol property matches given symbol;
 else, return None if not found. Perform case sensitive string compare.
 
 getNumSprites - receives nothing. Returns number of OurSprites in this inventory.
---------------------------
-Statement of Authenticity: This work was done on my own with no assistance from anyone else.
 '''
 
 import pygame
