@@ -1,0 +1,3 @@
+h hardwood.png http://opengameart.org/node/11950 - Wood Tile (ground)
+c crate.png http://opengameart.org/node/7793 - Crate (obstacles)
+l lava.png http://opengameart.org/node/10511 - Lava (outer walls)
