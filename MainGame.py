@@ -362,10 +362,11 @@ class Foods:
     @param: snakeHead - the head of the snake
     @return: true if the snake is eating food; false otherwise
     """
-    def check_eat(self,snakeHead):
+    def check_eat(self,snakeHead,soundfx):
         for i in range(len(self.foodList)):
             if (self.foodList[i].get_x() == snakeHead.get_x() and self.foodList[i].get_y() == snakeHead.get_y() ):
                 self.foodList.pop(i)
+                soundfx.play()
                 return True
         return False
 
@@ -424,6 +425,11 @@ def main():
     pygame.init()
     pygame.mixer.init()
 
+    hiscoreFile = open("highscore.txt", 'r')
+    hiscorelines = hiscoreFile.readlines()
+    hiscore = int(hiscorelines[0])
+    hiscoreFile.close()
+
     bite_sound = pygame.mixer.Sound("bite.wav")
     bite_sound.set_volume(.5)
     background_sound = pygame.mixer.Sound("background.wav")
@@ -441,7 +447,7 @@ def main():
     foodSprite = pygame.image.load("food.png")
     enemySprite = pygame.image.load("enemy.png")
 
-    pygame.display.set_caption("Snake Test")
+    pygame.display.set_caption("SnakMan")
     done = False
     clock = pygame.time.Clock()
 
@@ -465,6 +471,10 @@ def main():
     food.generate_food(3)
     food.draw_food()
 
+    myfont = pygame.font.SysFont("arial black", 20)
+    label = myfont.render("High Score: " + str(hiscore) + "                                                              Current Length: " + str(len(snake.get_bodyList())), 1, (255,255,0))
+    screen.blit(label, (0, -5))
+
     curr_dir = "RIGHT"
     level = 1
     while not done:
@@ -482,9 +492,8 @@ def main():
                 elif event.key == pygame.K_DOWN and curr_dir != "UP":
                     curr_dir = "DOWN"
 
-        snake.move(curr_dir,food.check_eat(snake.get_headObj()))
-        if food.check_eat(snake.get_headObj()):
-            bite_sound.play()
+        snake.move(curr_dir,food.check_eat(snake.get_headObj(),bite_sound))
+ 
         if mongoose_move:
             for m in mongooseList:
                 m.move(snake)
@@ -503,8 +512,18 @@ def main():
         if food.get_numFoods() < 1:
             food.generate_food(3)
             level += 1
+
+        if (len(snake.get_bodyList()) > hiscore):
+            hiscore = len(snake.get_bodyList())
+            hiscoreFile = open("highscore.txt", "w+")
+            hiscoreFile.write(str(hiscore))
+            hiscoreFile.close()
+            
+            
+        label = myfont.render("High Score: " + str(hiscore) + "                                                              Current Length: " + str(len(snake.get_bodyList())), 1, (255,255,0))
+        screen.blit(label, (0, -5))
         pygame.display.flip()
-        clock.tick(5 + level)
+        clock.tick(5 + level//3)
     pygame.quit()
 
 main()
