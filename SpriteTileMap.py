@@ -73,7 +73,7 @@ class SpriteTileMap:
         self.spriteInventory = OurSpriteInventory()
 
         mapFile = open(getcwd() + "/" + filename, 'r')
-        spriteFile = open(getcwd() + "/_sprite-detail.txt", 'r')
+        spriteFile = open(getcwd() + "/_sprite-details.txt", 'r')
 
         for line in mapFile:
             self.tileMap.append(line.split())
